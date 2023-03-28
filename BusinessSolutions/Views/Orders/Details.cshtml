@@ -1,0 +1,111 @@
+﻿@model BusinessSolutions.ViewModels.OrderVM
+
+<h1>Details</h1>
+<div id="viewDiv" style="display:block">
+    <h4>Order</h4>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Order.Number)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Order.Number
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Order.Date)
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Order.Date)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Order.Provider)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Order.Provider.Id)
+        </dd>
+    </dl>
+    <button id="toggle">Edit order</button>
+</div>
+<div id="editDiv" style="display:none">
+    <h4>Order</h4>
+    <hr />
+    <form asp-controller="Orders" asp-action="EditOrder">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div hidden>
+            <input asp-for="Order.Id" value ="@Model.Order.Id" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Order.Number" class="control-label"></label>
+            <input asp-for="Order.Number" class="form-control" />
+            <span asp-validation-for="Order.Number" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Order.Date" class="control-label"></label>
+            <input asp-for="Order.Date" class="form-control" />
+            <span asp-validation-for="Order.Date" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Order.ProviderId" class="control-label"></label>
+            <select asp-for="Order.ProviderId" class="form-control" asp-items="ViewBag.ProviderId"></select>
+        </div>
+        <form asp-controller="Orders" asp-action="Details" method="post" asp-route-id="@Model.Order.Id">
+            <input type="submit" value="Save" />
+        </form>
+    </form>
+</div>
+<br />
+<br />
+<div>
+    <h5>Order Items</h5>
+    <hr />
+    <table class="table">
+        <thead>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.OrderItem)
+            {
+                <tr onclick="location.href = '@Url.Action("EditOrderItem", "Orders", new { id=item.Id })'">
+                    <td>
+                        @item.Quantity
+                    </td>
+                    <td>
+                        @item.Name
+                    </td>
+                    <td>
+                        @item.Unit
+                    </td>
+                    <td>
+                        <form asp-controller="Orders" asp-action="Delete" method="post" asp-route-id="@item.Id">
+                            <input type="submit" value="Delete" />
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<br />
+<h4>Add Order Item</h4>
+<partial name="_AddOrderItem.cshtml"  model="new OrderItem {}" view-data="ViewData" />
+
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<script>
+    const editDiv = document.getElementById("editDiv");
+    const viewDiv = document.getElementById("viewDiv");
+    const btn = document.getElementById("toggle");
+    btn.onclick = function () {
+        if (editDiv.style.display !== "none") {
+            editDiv.style.display = "none";
+        } else {
+            editDiv.style.display = "block";
+        }
+        if (viewDiv.style.display !== "none") {
+            viewDiv.style.display = "none";
+        } else {
+            viewDiv.style.display = "block";
+        }
+    };
+</script>

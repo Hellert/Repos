@@ -1,0 +1,77 @@
+﻿@model IEnumerable<BusinessSolutions.Models.Order>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "/Views/Shared/_Layout.cshtml";
+    var fromDate = ViewBag.fromDate as DateTime?;
+    var toDate = ViewBag.toDate as DateTime?;
+}
+
+<h1>Index</h1>
+
+@using(Html.BeginForm("Index", "Orders", FormMethod.Post))
+{
+<p>
+        <div>From Date: @Html.TextBox("fromDate", fromDate == null ? "" : string.Format("{0:dd MM yyy}", fromDate.Value), new { @class = "DatePicker" })</div>
+    <br>
+        <div>To Date: @Html.TextBox("toDate", toDate == null ? "" : string.Format("{0:dd MM yyy}", toDate.Value), new { @class = "DatePicker" })</div>
+
+    <input type="submit" value="Search" />
+    <br />
+</p>
+}
+<
+<p>
+    <a asp-action="Create">Create new Order</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Number)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Provider)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <form asp-action="Index" method="get">
+        <tr>
+            <td>
+                <input type="text" name="SearchByNumber" value="@ViewData["CurrentFilter"]" />
+            </td>
+            <td>
+                <input type="text" name="SearchByDate" value="@ViewData["CurrentFilter"]" />
+            </td>
+            <td>
+                <input type="text" name="SearchByProdiver" value="@ViewData["CurrentFilter"]" />
+            </td>
+            <td>
+                <input type="submit" value="Search" class="btn btn-default" />
+            </td>
+        </tr>
+        </form>
+        @foreach (var item in Model)
+        {
+            <tr onclick="location.href = '@Url.Action("Details","Orders", new {id = item.Id})'">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Number)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Provider.Id)
+                </td>
+                <td>
+                    <a asp-controller="Orders" asp-action="DeleteOrder" method="post" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
